@@ -1,0 +1,268 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>GeoJSONLayer | Sample | ArcGIS Maps SDK for JavaScript 4.30</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.30/"></script>
+
+  <script>
+    require(["esri/Map", "esri/layers/GeoJSONLayer", "esri/views/MapView","esri/widgets/Legend"], (
+      Map,
+      GeoJSONLayer,
+      MapView,Legend
+    ) => {
+      // If GeoJSON files are not on the same domain as your website, a CORS enabled server
+      // or a proxy is required.
+
+      
+      
+      
+      const geojson = {
+ "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            46.820183987551744,
+            24.734778286423648
+          ],
+          [
+            46.82376574285511,
+            24.729921901202527
+          ]
+        ]
+      },
+      "properties": {
+        "FID": 0,
+        "Id": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            46.8238664417001,
+            24.73000741030313
+          ],
+          [
+            46.82029382366171,
+            24.73486836357368
+          ]
+        ]
+      },
+      "properties": {
+        "FID": 1,
+        "Id": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            46.82408427313573,
+            24.737653366774875
+          ],
+          [
+            46.82795061195042,
+            24.73244843823648
+          ]
+        ]
+      },
+      "properties": {
+        "FID": 2,
+        "Id": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            46.82803246571244,
+            24.732534099168145
+          ],
+          [
+            46.82418725675657,
+            24.737728938793516
+          ]
+        ]
+      },
+      "properties": {
+        "FID": 3,
+        "Id": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            46.824424597976275,
+            24.73719010767623
+          ],
+          [
+            46.82042213531231,
+            24.734697298210058
+          ]
+        ]
+      },
+      "properties": {
+        "FID": 4,
+        "Id": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            46.82049188786965,
+            24.73460577215424
+          ],
+          [
+            46.82448820483649,
+            24.737103525498195
+          ]
+        ]
+      },
+      "properties": {
+        "FID": 5,
+        "Id": 0
+      }
+    }
+  ]
+}
+
+// create a new blob from geojson featurecollection
+const blob = new Blob([JSON.stringify(geojson)], {
+  type: "application/json"
+});
+
+// URL reference to the blob
+const url = URL.createObjectURL(blob);
+// create new geojson layer using the blob url
+const layer = new GeoJSONLayer({
+  url
+});
+
+      // Paste the url into a browser's address bar to download and view the attributes
+      // in the GeoJSON file. These attributes include:
+      // * mag - magnitude
+      // * type - earthquake or other event such as nuclear test
+      // * place - location of the event
+      // * time - the time of the event
+      // Use the Arcade Date() function to format time field into a human-readable format
+
+      const template = {
+        title: "Earthquake Info",
+        content: "Magnitude {mag} {type} hit {place} on {time}",
+        fieldInfos: [
+          {
+            fieldName: 'time',
+            format: {
+              dateFormat: 'short-date-short-time'
+            }
+          }
+        ]
+      };
+
+      const renderer = {
+        type: "simple",
+        field: "mag",
+        symbol: {
+          type: "simple-line",
+           
+            color: "green",
+          outline: {
+            color: "0, 255, 255, 0.2"
+          }
+        },
+        visualVariables: [{
+          type: "size",
+          field: "mag",
+          stops: [{
+              value: 2.5,
+              size: "4px"
+            },
+            {
+              value: 8,
+              size: "40px"
+            }
+          ]
+        }]
+      };
+
+      const geojsonLayer = new GeoJSONLayer({
+        url: url,
+        copyright: "USGS Earthquakes",
+        popupTemplate: template,
+        renderer: renderer,
+        orderBy: {
+          field: "mag"
+        }
+      });
+
+      const map = new Map({
+        basemap: "dark-gray",
+        layers: [geojsonLayer]
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        center: [ 46.8238664417001, 24.737653366774875],
+        zoom: 15,
+        map: map
+      });
+      
+      
+      var legend = new Legend({
+          view: view,
+        });
+
+        view.ui.add(legend, "bottom-right");
+      
+      
+      
+      
+      
+    });
+
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>
